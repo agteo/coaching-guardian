@@ -205,10 +205,9 @@ Return ONLY valid JSON."""
 
     try:
         # Build list of endpoints to try
-        # If endpoint ID is provided, prioritize dedicated endpoint
         endpoints = []
         if custom_endpoint:
-            # If custom endpoint doesn't end with /chat/completions, add it
+            # If custom endpoint is explicitly set, use it first
             if custom_endpoint.endswith("/chat/completions"):
                 endpoints.append(custom_endpoint)
             elif custom_endpoint.endswith("/v1"):
@@ -216,16 +215,19 @@ Return ONLY valid JSON."""
             else:
                 endpoints.append(f"{custom_endpoint.rstrip('/')}/v1/chat/completions")
         elif endpoint_id:
-            # If endpoint ID is set, use dedicated endpoint base URL
+            # If endpoint ID is set, prioritize dedicated endpoint
             endpoints.append("https://api.friendli.ai/dedicated/v1/chat/completions")
-        
-        # Add standard endpoints as fallbacks
-        endpoints.extend([
-            "https://api.friendli.ai/dedicated/v1/chat/completions",  # Dedicated endpoint
-            "https://api.friendli.ai/v1/chat/completions",
-            "https://api.friendli.ai/v1/completions",
-            "https://inference.friendli.ai/v1/chat/completions",
-        ])
+            # Add serverless endpoints as fallbacks
+            endpoints.extend([
+                "https://api.friendli.ai/serverless/v1/chat/completions",
+            ])
+        else:
+            # No endpoint ID or custom endpoint - prioritize serverless endpoints
+            endpoints.extend([
+                "https://api.friendli.ai/serverless/v1/chat/completions",
+            ])
+            # Add dedicated endpoint as fallback
+            endpoints.append("https://api.friendli.ai/dedicated/v1/chat/completions")
         
         last_error = None
         for endpoint in endpoints:

@@ -1,0 +1,13 @@
+# Core dependencies
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Opik for observability and logging
+opik>=0.1.0
+
+# Rich for verbose demo output (optional but recommended)
+rich>=13.0.0
+
+# Optional: For type checking and development
+# mypy>=1.7.0
+# pytest>=7.4.0
